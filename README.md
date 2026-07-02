@@ -4,6 +4,10 @@
 
 一个集成化的 YOLO 模型训练、部署、分析平台，支持全系列 YOLO 模型的统一接口调用。
 
+## 🎬 Demo
+
+<video src="https://private-user-images.githubusercontent.com/147730960/614236966-b7833772-16de-4893-b022-35b49dd47bf9.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODI2NDA1NDIsIm5iZiI6MTc4MjY0MDI0MiwicGF0aCI6Ii8xNDc3MzA5NjAvNjE0MjM2OTY2LWI3ODMzNzcyLTE2ZGUtNDg5My1iMDIyLTM1YjQ5ZGQ0N2JmOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNjI4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDYyOFQwOTUwNDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02MmE2MDJjMTA1Njc2ODNkYjlkODNjMDA5MjdmY2YzNDNjNjZjOTc3MGUxOGM0YWVlZjI0MmJiM2EyOTNiZGM4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9dmlkZW8lMkZtcDQifQ.35mEGa-VVfgLbsHobGJgfR3qLwoPFzakTK2sFsAxOPw" controls="controls" muted="muted" class="d-block rounded-bottom-2 border-top width-fit" style="max-height:640px; min-height: 200px"></video>
+
 ---
 
 ## ✨ 功能特性
