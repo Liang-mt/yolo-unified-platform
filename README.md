@@ -140,7 +140,18 @@ python main.py export --weights runs/train/exp/weights/best.pt --format onnx
 | **Export** | 模型导出 | 多格式导出 + opset/dynamic/simplify + shape 详情 |
 | **Benchmark** | 速度测速 | PyTorch/ONNX 多后端对比 |
 
+### Detect 页面
+
+![Detect](./datasets/detect_fire.png)
+
+- 支持图片和视频文件
+- 视频逐帧检测，左右同步显示原视频和检测结果
+- 支持暂停/继续/停止
+- 可选帧率同步或实时检测速度
+
 ### 训练页面
+
+![Train](./datasets/train.png)
 
 - **6 个实时图表**：box_loss、cls_loss、dfl_loss、lr、mAP（mAP50 + mAP50-95）、precision（Precision + Recall）
 - **进度信息**：epoch 进度条、已用时间、预计剩余时间、GPU 显存
@@ -172,13 +183,6 @@ VIDEO_SYNC_FPS = True
 - **格式**：ONNX / TorchScript / TensorRT / TFLite / CoreML / Paddle
 - **参数**：Image Size、ONNX Opset、FP16、Dynamic Batch、Simplify
 - **导出详情**：input shape、output shape、文件大小、ONNX opset 版本
-
-### Detect 页面
-
-- 支持图片和视频文件
-- 视频逐帧检测，左右同步显示原视频和检测结果
-- 支持暂停/继续/停止
-- 可选帧率同步或实时检测速度
 
 ---
 
