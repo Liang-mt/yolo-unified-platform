@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
         layout.addStretch()
 
         # Version
-        ver_label = QLabel("v1.0")
+        ver_label = QLabel("v2.0")
         ver_label.setStyleSheet("font: 900 italic 10pt 'Segoe UI'; color: rgba(255,255,255,199);")
         ver_label.setAlignment(Qt.AlignCenter)
         ver_label.setFixedHeight(20)
@@ -278,7 +278,7 @@ class MainWindow(QMainWindow):
 
         # Custom model file
         self.custom_model_btn = QPushButton("Browse .pt")
-        self.custom_model_btn.setFixedHeight(28)
+        self.custom_model_btn.setFixedHeight(32)
         self.custom_model_btn.setStyleSheet("""
             QPushButton {
                 background-color: rgba(255, 255, 255, 80);
@@ -295,21 +295,22 @@ class MainWindow(QMainWindow):
         self.custom_model_btn.setCursor(Qt.PointingHandCursor)
 
         self.custom_model_label = QLabel("")
-        self.custom_model_label.setStyleSheet("color: rgb(40,40,40) !important; font: 9pt 'Segoe UI'; background: transparent; border: none;")
+        self.custom_model_label.setStyleSheet(
+            "color: rgb(40,40,40) !important; font: 700 9pt 'Segoe UI'; background: transparent; border: none;"
+        )
         self.custom_model_label.setAlignment(Qt.AlignCenter)
         self.custom_model_label.setWordWrap(True)
-        self.custom_model_label.setMinimumHeight(20)
+        self.custom_model_label.setMinimumHeight(22)
 
         custom_inner = QWidget()
         custom_layout = QVBoxLayout(custom_inner)
-        custom_layout.setContentsMargins(8, 4, 8, 4)
-        custom_layout.setSpacing(3)
+        custom_layout.setContentsMargins(10, 10, 10, 10)
+        custom_layout.setSpacing(14)
         custom_layout.addWidget(self.custom_model_btn, 0, Qt.AlignHCenter)
         custom_layout.addWidget(self.custom_model_label, 0, Qt.AlignHCenter)
 
         custom_frame = self._param_frame("Custom", custom_inner, dark=True)
-        custom_frame.setMinimumHeight(85)
-        custom_frame.setMaximumHeight(85)
+        custom_frame.setMinimumHeight(110)
         layout.addWidget(custom_frame)
 
         # Track custom model path
@@ -486,14 +487,23 @@ class MainWindow(QMainWindow):
         left_layout.setContentsMargins(5, 5, 5, 5)
 
         self.train_model_box = QComboBox()
+        self.train_model_box.setMinimumWidth(180)
         self.train_model_box.setStyleSheet(COMBOBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Model", self.train_model_box, dark=False))
-
-        self.train_custom_btn = QPushButton("Browse .pt")
+        self.train_scale_box = QComboBox()
+        self.train_scale_box.addItems(["n", "s", "m", "l", "x"])
+        self.train_scale_box.setFixedWidth(50)
+        self.train_scale_box.setStyleSheet(COMBOBOX_STYLE)
+        self.train_scale_box.setToolTip("Model scale (only for .yaml)")
+        self.train_custom_btn = QPushButton("Browse")
         self.train_custom_btn.setFixedHeight(30)
         self.train_custom_btn.setStyleSheet(CONTENT_BUTTON)
         self.train_custom_btn.setCursor(Qt.PointingHandCursor)
-        left_layout.addWidget(self._param_frame("Custom Model", self.train_custom_btn, dark=False))
+        train_browse_row = QHBoxLayout()
+        train_browse_row.setSpacing(4)
+        train_browse_row.addWidget(self.train_model_box, 1)
+        train_browse_row.addWidget(self.train_scale_box)
+        train_browse_row.addWidget(self.train_custom_btn)
+        left_layout.addLayout(train_browse_row)
 
         self.train_yaml_box = QComboBox()
         self.train_yaml_box.setEditable(True)
@@ -517,24 +527,30 @@ class MainWindow(QMainWindow):
 
         left_layout.addLayout(yaml_row)
 
+        # 基本参数 2×3 网格
+        basic_grid = QGridLayout()
+        basic_grid.setSpacing(6)
+        basic_grid.setColumnStretch(0, 1)
+        basic_grid.setColumnStretch(1, 1)
+
         self.train_epochs = QSpinBox()
         self.train_epochs.setRange(1, 9999)
         self.train_epochs.setValue(100)
         self.train_epochs.setStyleSheet(SPINBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Epochs", self.train_epochs, dark=False))
+        basic_grid.addWidget(self._param_frame("Epochs", self.train_epochs, dark=False), 0, 0)
 
         self.train_batch = QSpinBox()
         self.train_batch.setRange(1, 256)
         self.train_batch.setValue(16)
         self.train_batch.setStyleSheet(SPINBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Batch Size", self.train_batch, dark=False))
+        basic_grid.addWidget(self._param_frame("Batch Size", self.train_batch, dark=False), 0, 1)
 
         self.train_imgsz = QSpinBox()
         self.train_imgsz.setRange(32, 2048)
         self.train_imgsz.setValue(640)
         self.train_imgsz.setSingleStep(32)
         self.train_imgsz.setStyleSheet(SPINBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Image Size", self.train_imgsz, dark=False))
+        basic_grid.addWidget(self._param_frame("Image Size", self.train_imgsz, dark=False), 1, 0)
 
         self.train_lr = QDoubleSpinBox()
         self.train_lr.setRange(0.0001, 1.0)
@@ -542,17 +558,59 @@ class MainWindow(QMainWindow):
         self.train_lr.setSingleStep(0.001)
         self.train_lr.setDecimals(4)
         self.train_lr.setStyleSheet(SPINBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Learning Rate", self.train_lr, dark=False))
+        basic_grid.addWidget(self._param_frame("Learning Rate (lr0)", self.train_lr, dark=False), 1, 1)
 
         self.train_device = QLineEdit("0")
-        self.train_device.setMinimumWidth(200)
         self.train_device.setStyleSheet(LINEEDIT_STYLE)
-        left_layout.addWidget(self._param_frame("GPU Device", self.train_device, dark=False))
+        basic_grid.addWidget(self._param_frame("GPU Device", self.train_device, dark=False), 2, 0)
 
         self.train_optimizer = QComboBox()
         self.train_optimizer.addItems(["auto", "SGD", "Adam", "AdamW", "NAdam", "RAdam", "RMSProp"])
         self.train_optimizer.setStyleSheet(COMBOBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Optimizer", self.train_optimizer, dark=False))
+        basic_grid.addWidget(self._param_frame("Optimizer", self.train_optimizer, dark=False), 2, 1)
+
+        left_layout.addLayout(basic_grid)
+
+        # 超参数 2×2 网格
+        hyp_grid = QGridLayout()
+        hyp_grid.setSpacing(6)
+        hyp_grid.setColumnStretch(0, 1)
+        hyp_grid.setColumnStretch(1, 1)
+
+        self.train_lrf = QDoubleSpinBox()
+        self.train_lrf.setRange(0.0001, 1.0)
+        self.train_lrf.setValue(0.01)
+        self.train_lrf.setSingleStep(0.001)
+        self.train_lrf.setDecimals(4)
+        self.train_lrf.setStyleSheet(SPINBOX_STYLE)
+        self.train_lrf.setToolTip("Final LR = lr0 × lrf")
+        hyp_grid.addWidget(self._param_frame("LR Factor (lrf)", self.train_lrf, dark=False), 0, 0)
+
+        self.train_momentum = QDoubleSpinBox()
+        self.train_momentum.setRange(0.0, 1.0)
+        self.train_momentum.setValue(0.937)
+        self.train_momentum.setSingleStep(0.001)
+        self.train_momentum.setDecimals(3)
+        self.train_momentum.setStyleSheet(SPINBOX_STYLE)
+        hyp_grid.addWidget(self._param_frame("Momentum", self.train_momentum, dark=False), 0, 1)
+
+        self.train_weight_decay = QDoubleSpinBox()
+        self.train_weight_decay.setRange(0.0, 0.1)
+        self.train_weight_decay.setValue(0.0005)
+        self.train_weight_decay.setSingleStep(0.0001)
+        self.train_weight_decay.setDecimals(4)
+        self.train_weight_decay.setStyleSheet(SPINBOX_STYLE)
+        hyp_grid.addWidget(self._param_frame("Weight Decay", self.train_weight_decay, dark=False), 1, 0)
+
+        self.train_warmup_epochs = QDoubleSpinBox()
+        self.train_warmup_epochs.setRange(0.0, 50.0)
+        self.train_warmup_epochs.setValue(3.0)
+        self.train_warmup_epochs.setSingleStep(0.5)
+        self.train_warmup_epochs.setDecimals(1)
+        self.train_warmup_epochs.setStyleSheet(SPINBOX_STYLE)
+        hyp_grid.addWidget(self._param_frame("Warmup Epochs", self.train_warmup_epochs, dark=False), 1, 1)
+
+        left_layout.addLayout(hyp_grid)
 
         check_row = QHBoxLayout()
         check_row.setSpacing(15)
@@ -564,25 +622,6 @@ class MainWindow(QMainWindow):
         check_row.addWidget(self.train_resume)
         check_row.addStretch()
         left_layout.addLayout(check_row)
-
-        cfg_row = QHBoxLayout()
-        cfg_row.setSpacing(5)
-
-        self.train_cfg_browse = QPushButton("cfg")
-        self.train_cfg_browse.setFixedHeight(32)
-        self.train_cfg_browse.setStyleSheet(CONTENT_BUTTON + "QPushButton { padding: 2px 16px; }")
-        self.train_cfg_browse.setCursor(Qt.PointingHandCursor)
-        self.train_cfg_browse.setToolTip("Training config YAML — 覆盖所有训练参数")
-        cfg_row.addWidget(self.train_cfg_browse)
-
-        self.train_hyp_browse = QPushButton("hyp")
-        self.train_hyp_browse.setFixedHeight(32)
-        self.train_hyp_browse.setStyleSheet(CONTENT_BUTTON + "QPushButton { padding: 2px 16px; }")
-        self.train_hyp_browse.setCursor(Qt.PointingHandCursor)
-        self.train_hyp_browse.setToolTip("Hyperparameter YAML — lr, momentum, augment 等")
-        cfg_row.addWidget(self.train_hyp_browse)
-
-        left_layout.addLayout(cfg_row)
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(5)
@@ -637,8 +676,9 @@ class MainWindow(QMainWindow):
         self._train_recall_values = []
         self._train_pr_epochs = []
         self._train_pending_metrics = []
-        self._cfg_path = ""
-        self._hyp_path = ""
+        self._train_custom_model_path = None
+        self._export_custom_model_path = None
+        self._bench_custom_model_path = None
 
         # Timer for chart updates (runs in main thread)
         self._chart_timer = QTimer()
@@ -772,14 +812,17 @@ class MainWindow(QMainWindow):
         left_layout = QVBoxLayout(left)
 
         self.export_model_box = QComboBox()
+        self.export_model_box.setMinimumWidth(220)
         self.export_model_box.setStyleSheet(COMBOBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Model", self.export_model_box, dark=False))
-
-        self.export_custom_btn = QPushButton("Browse .pt")
+        self.export_custom_btn = QPushButton("Browse")
         self.export_custom_btn.setFixedHeight(30)
         self.export_custom_btn.setStyleSheet(CONTENT_BUTTON)
         self.export_custom_btn.setCursor(Qt.PointingHandCursor)
-        left_layout.addWidget(self._param_frame("Custom Model", self.export_custom_btn, dark=False))
+        export_browse_row = QHBoxLayout()
+        export_browse_row.setSpacing(6)
+        export_browse_row.addWidget(self.export_model_box, 1)
+        export_browse_row.addWidget(self.export_custom_btn)
+        left_layout.addLayout(export_browse_row)
 
         self.export_format = QComboBox()
         self.export_format.addItems(["onnx", "torchscript", "engine", "tflite", "coreml", "paddle"])
@@ -840,18 +883,21 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(10, 5, 10, 5)
 
         left = QFrame()
-        left.setMaximumWidth(300)
+        left.setMaximumWidth(350)
         left_layout = QVBoxLayout(left)
 
         self.bench_model_box = QComboBox()
+        self.bench_model_box.setMinimumWidth(220)
         self.bench_model_box.setStyleSheet(COMBOBOX_STYLE)
-        left_layout.addWidget(self._param_frame("Model", self.bench_model_box, dark=False))
-
-        self.bench_custom_btn = QPushButton("Browse .pt")
+        self.bench_custom_btn = QPushButton("Browse")
         self.bench_custom_btn.setFixedHeight(30)
         self.bench_custom_btn.setStyleSheet(CONTENT_BUTTON)
         self.bench_custom_btn.setCursor(Qt.PointingHandCursor)
-        left_layout.addWidget(self._param_frame("Custom", self.bench_custom_btn, dark=False))
+        bench_browse_row = QHBoxLayout()
+        bench_browse_row.setSpacing(6)
+        bench_browse_row.addWidget(self.bench_model_box, 1)
+        bench_browse_row.addWidget(self.bench_custom_btn)
+        left_layout.addLayout(bench_browse_row)
 
         self.bench_imgsz = QSpinBox()
         self.bench_imgsz.setRange(32, 2048)
@@ -926,16 +972,17 @@ class MainWindow(QMainWindow):
         self.train_yaml_browse.clicked.connect(self._browse_yaml)
         self.train_custom_btn.clicked.connect(self._browse_train_model)
         self.train_yaml_refresh.clicked.connect(self._refresh_yaml)
-        self.train_cfg_browse.clicked.connect(self._browse_cfg)
-        self.train_hyp_browse.clicked.connect(self._browse_hyp)
+        self.train_model_box.currentTextChanged.connect(self._on_train_model_selected)
 
         # Export
         self.export_btn.clicked.connect(self._run_export)
         self.export_custom_btn.clicked.connect(self._browse_export_model)
+        self.export_model_box.currentTextChanged.connect(self._on_export_model_selected)
 
         # Benchmark
         self.bench_btn.clicked.connect(self._run_benchmark)
         self.bench_custom_btn.clicked.connect(self._browse_bench_model)
+        self.bench_model_box.currentTextChanged.connect(self._on_bench_model_selected)
 
     def _switch_page(self, key):
         page_map = {"detect": 0, "train": 1, "export": 2, "bench": 3}
@@ -1220,13 +1267,46 @@ class MainWindow(QMainWindow):
             path = box.currentText()
             if not path:
                 return None
+            # Check local models dir
             full = self._models_dir / path
             if full.exists():
                 return str(full)
             if Path(path).exists():
                 return path
+            # Return as-is (ultralytics handles .yaml lookup internally)
             return path
         return None
+
+    def _set_custom_model(self, box, name):
+        """Insert custom model name at top of combobox and select it."""
+        self._remove_custom_model(box)
+        box.insertItem(0, name)
+        box.setCurrentIndex(0)
+
+    def _remove_custom_model(self, box):
+        """Remove custom model item (index 0) if it's not a built-in model."""
+        if box.count() > 0:
+            first = box.itemText(0)
+            built_in = [box.itemText(i) for i in range(box.count())]
+            # If first item is not in the built-in list (i.e. it was a custom insert)
+            models_dir = self._models_dir
+            if not (models_dir / first).exists():
+                box.removeItem(0)
+
+    def _resolve_model(self, box, custom_path, scale_box=None):
+        """Resolve model path: custom > dropdown > None.
+        If scale_box is provided and model is .yaml, append scale suffix."""
+        if custom_path and Path(custom_path).exists():
+            path = custom_path
+        else:
+            path = self._get_model_path(box)
+        if path and scale_box and (path.endswith('.yaml') or path.endswith('.yml')):
+            scale = scale_box.currentText()
+            base = Path(path).stem  # e.g. "yolov8" from "yolov8.yaml"
+            # Only add suffix if not already present
+            if not base.endswith(scale):
+                path = str(Path(path).parent / f"{base}{scale}.yaml")
+        return path
 
     def _load_model(self, model_path, device=None):
         """Load and cache YOLO model."""
@@ -1247,8 +1327,26 @@ class MainWindow(QMainWindow):
             self._custom_model_path = None
             self.custom_model_label.setText("")
 
+    def _on_train_model_selected(self, text):
+        if text and self._train_custom_model_path:
+            if (self._models_dir / text).exists():
+                self._train_custom_model_path = None
+                self._remove_custom_model(self.train_model_box)
+
+    def _on_export_model_selected(self, text):
+        if text and self._export_custom_model_path:
+            if (self._models_dir / text).exists():
+                self._export_custom_model_path = None
+                self._remove_custom_model(self.export_model_box)
+
+    def _on_bench_model_selected(self, text):
+        if text and self._bench_custom_model_path:
+            if (self._models_dir / text).exists():
+                self._bench_custom_model_path = None
+                self._remove_custom_model(self.bench_model_box)
+
     def _browse_model(self):
-        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt)")
+        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt *.yaml *.yml)")
         if f:
             name = Path(f).name
             self.custom_model_label.setText(name)
@@ -1257,19 +1355,25 @@ class MainWindow(QMainWindow):
             self.status_label.setText(f"Custom model: {name}")
 
     def _browse_train_model(self):
-        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt)")
+        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt *.yaml *.yml)")
         if f:
-            self.train_model_box.setCurrentText(f)
+            self._train_custom_model_path = f
+            self._set_custom_model(self.train_model_box, Path(f).name)
+            self.status_label.setText(f"Train model: {Path(f).name}")
 
     def _browse_export_model(self):
-        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt)")
+        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt *.yaml *.yml)")
         if f:
-            self.export_model_box.setCurrentText(f)
+            self._export_custom_model_path = f
+            self._set_custom_model(self.export_model_box, Path(f).name)
+            self.status_label.setText(f"Export model: {Path(f).name}")
 
     def _browse_bench_model(self):
-        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt)")
+        f, _ = QFileDialog.getOpenFileName(self, "Select Model", "", "Model Files (*.pt *.yaml *.yml)")
         if f:
-            self.bench_model_box.setCurrentText(f)
+            self._bench_custom_model_path = f
+            self._set_custom_model(self.bench_model_box, Path(f).name)
+            self.status_label.setText(f"Bench model: {Path(f).name}")
 
     # ── Inference ──────────────────────────────────────────────────
 
@@ -1287,26 +1391,8 @@ class MainWindow(QMainWindow):
             self.train_yaml_box.setCurrentText(f)
             self.status_label.setText(f"Dataset: {Path(f).name}")
 
-    def _browse_cfg(self):
-        f, _ = QFileDialog.getOpenFileName(
-            self, "Select Training Config YAML", "",
-            "YAML Files (*.yaml *.yml);;All Files (*)"
-        )
-        if f:
-            self._cfg_path = f
-            self.status_label.setText(f"Config: {Path(f).name}")
-
-    def _browse_hyp(self):
-        f, _ = QFileDialog.getOpenFileName(
-            self, "Select Hyperparameter YAML", "",
-            "YAML Files (*.yaml *.yml);;All Files (*)"
-        )
-        if f:
-            self._hyp_path = f
-            self.status_label.setText(f"Hyp: {Path(f).name}")
-
     def _run_train(self):
-        model_path = self._get_model_path(self.train_model_box)
+        model_path = self._resolve_model(self.train_model_box, self._train_custom_model_path, self.train_scale_box)
         data_path = self.train_yaml_box.currentText().strip()
 
         if not data_path:
@@ -1314,9 +1400,20 @@ class MainWindow(QMainWindow):
             return
 
         # Clean up previous training session
-        if hasattr(self, '_train_worker') and self._train_worker.isRunning():
-            self._train_worker.force_stop()
-            self._train_worker.wait(3000)
+        if hasattr(self, '_train_worker') and self._train_worker is not None:
+            if self._train_worker.isRunning():
+                self._train_worker.force_stop()
+                self._train_worker.wait(3000)
+            # Disconnect signals to prevent stale references
+            try:
+                self._train_worker.epoch_done.disconnect()
+                self._train_worker.train_finished.disconnect()
+                self._train_worker.train_error.disconnect()
+                self._train_worker.log_updated.disconnect()
+            except RuntimeError:
+                pass  # already disconnected
+            self._train_worker.deleteLater()
+            self._train_worker = None
         if hasattr(self, '_chart_timer'):
             self._chart_timer.stop()
 
@@ -1373,9 +1470,11 @@ class MainWindow(QMainWindow):
         self._train_worker.batch = self.train_batch.value()
         self._train_worker.imgsz = self.train_imgsz.value()
         self._train_worker.lr = self.train_lr.value()
+        self._train_worker.lrf = self.train_lrf.value()
+        self._train_worker.momentum = self.train_momentum.value()
+        self._train_worker.weight_decay = self.train_weight_decay.value()
+        self._train_worker.warmup_epochs = self.train_warmup_epochs.value()
         self._train_worker.device = self.train_device.text().strip()
-        self._train_worker.cfg = getattr(self, '_cfg_path', '')
-        self._train_worker.hyp = getattr(self, '_hyp_path', '')
         self._train_worker.optimizer = self.train_optimizer.currentText()
         self._train_worker.resume = self.train_resume.isChecked()
         self._train_worker.cache = self.train_cache.isChecked()
@@ -1566,7 +1665,7 @@ class MainWindow(QMainWindow):
     # ── Export ─────────────────────────────────────────────────────
 
     def _run_export(self):
-        model_path = self._get_model_path(self.export_model_box)
+        model_path = self._resolve_model(self.export_model_box, self._export_custom_model_path)
         if not model_path:
             self.status_label.setText("Please select a model")
             return
@@ -1601,7 +1700,7 @@ class MainWindow(QMainWindow):
     # ── Benchmark ──────────────────────────────────────────────────
 
     def _run_benchmark(self):
-        model_path = self._get_model_path(self.bench_model_box)
+        model_path = self._resolve_model(self.bench_model_box, self._bench_custom_model_path)
         if not model_path:
             self.status_label.setText("Please select a model")
             return

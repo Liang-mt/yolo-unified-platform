@@ -54,9 +54,11 @@ class TrainWorker(QThread):
         self.batch = 16
         self.imgsz = 640
         self.lr = 0.01
+        self.lrf = 0.01
+        self.momentum = 0.937
+        self.weight_decay = 0.0005
+        self.warmup_epochs = 3.0
         self.device = "0"
-        self.cfg = ""
-        self.hyp = ""
         self.optimizer = "auto"
         self.resume = False
         self.cache = False
@@ -176,15 +178,15 @@ class TrainWorker(QThread):
             train_kwargs = dict(
                 data=self.data_path, epochs=self.epochs,
                 batch=self.batch, imgsz=self.imgsz,
-                lr0=self.lr, device=self.device,
+                lr0=self.lr, lrf=self.lrf,
+                momentum=self.momentum,
+                weight_decay=self.weight_decay,
+                warmup_epochs=self.warmup_epochs,
+                device=self.device,
                 optimizer=self.optimizer,
                 resume=self.resume,
                 cache=self.cache,
             )
-            if self.cfg:
-                train_kwargs["cfg"] = self.cfg
-            if self.hyp:
-                train_kwargs["hyp"] = self.hyp
             result = model.train(**train_kwargs)
 
             sys.stdout, sys.stderr = old_stdout, old_stderr
@@ -477,6 +479,7 @@ class BenchmarkWorker(QThread):
             model = YOLO(self.model_path)
             bench = SpeedBenchmark()
             result = bench.benchmark_pytorch(model.model, img_size=self.imgsz, num_runs=self.runs)
+            result = {"model": Path(self.model_path).name, **result}
             self.finished.emit(json.dumps(result, indent=2))
         except Exception as e:
             self.error.emit(str(e))

@@ -6,7 +6,7 @@
 
 ## 🎬 Demo
 
-<video src="https://private-user-images.githubusercontent.com/147730960/616556862-38df9014-9dde-415d-b437-59d925adb672.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODMwMzQ5ODgsIm5iZiI6MTc4MzAzNDY4OCwicGF0aCI6Ii8xNDc3MzA5NjAvNjE2NTU2ODYyLTM4ZGY5MDE0LTlkZGUtNDE1ZC1iNDM3LTU5ZDkyNWFkYjY3Mi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNzAyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDcwMlQyMzI0NDhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1kZWE1M2Q1N2Q5NTBmN2ZkYjI4Yzc4YmIxY2ZlN2NmZDA5NzVjZDBjZWFlYjhhMzczMjBkZWEyNTEzYTc3NzRmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9dmlkZW8lMkZtcDQifQ.4LMsEkp9m8rXZ-HRlv4yWIQdCAiLppL2zHRTgbbYgAI" controls="controls" muted="muted" style="max-height:640px; min-height: 200px"></video>
+<video src="https://private-user-images.githubusercontent.com/147730960/616661193-ccde0869-2a89-457d-9ec8-08dc9b7f229b.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODMwNTY4NDMsIm5iZiI6MTc4MzA1NjU0MywicGF0aCI6Ii8xNDc3MzA5NjAvNjE2NjYxMTkzLWNjZGUwODY5LTJhODktNDU3ZC05ZWM4LTA4ZGM5YjdmMjI5Yi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNzAzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDcwM1QwNTI5MDNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT01Zjg5MmY4NGU0NjczNTllNGU2MjFjNWYzMjFmNDhjNTJhOTYwNTg3YjA5YWU0MGZjMzJhOTdhZDg0YWZmOTY0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9dmlkZW8lMkZtcDQifQ.cTa7LihWne760NiFM_tuZ45ZcPsgdwNTj_0hW-m1aEQ" controls="controls" muted="muted" style="max-height:640px; min-height: 200px"></video>
 
 ---
 
@@ -40,9 +40,8 @@ yolo-unified-platform/
 │   ├── yolo11n.pt
 │   └── yolo26n.pt
 ├── docs/                   # 文档
-│   └── bugfix-log.md      # Bug 修复日志
-├── 11.png                  # Detect 页面截图
-├── 22.png                  # Train 页面截图
+│   ├── bugfix-log.md      # Bug 修复日志
+│   └── 修改文档.md        # 代码修改记录
 ├── main_gui.py             # 启动入口
 ├── README.md
 └── requirements.txt
@@ -73,9 +72,9 @@ python main_gui.py
 | Tab | 功能 | 详情 |
 |-----|------|------|
 | **Detect** | 图片/视频检测 | 左侧输入，右侧结果，视频支持暂停/停止 |
-| **Train** | 模型训练 | 6 个实时图表 + 进度条 + Force Stop + cfg/hyp/optimizer |
+| **Train** | 模型训练 | 6 个实时图表 + 进度条 + Force Stop + 丰富超参数 |
 | **Export** | 模型导出 | 多格式导出 + opset/dynamic/simplify + shape 详情 |
-| **Benchmark** | 速度测速 | PyTorch/ONNX 多后端对比 |
+| **Benchmark** | 速度测速 | PyTorch/ONNX 多后端对比，显示模型名称 |
 
 ### Detect 页面
 
@@ -85,6 +84,7 @@ python main_gui.py
 - 视频逐帧检测，左右同步显示原视频和检测结果
 - 支持暂停/继续/停止
 - 可选帧率同步或实时检测速度
+- 模型下拉框 + Browse 按钮选择自定义模型
 
 ### 训练页面
 
@@ -94,8 +94,21 @@ python main_gui.py
 - **进度信息**：epoch 进度条、已用时间、预计剩余时间、GPU 显存
 - **Force Stop**：batch 级别响应，自动保存并压缩模型（best.pt + last.pt）
 - **GPU 内存管理**：训练结束自动释放显存
-- **训练参数**：Optimizer 选择、Cache Images、Resume Training、cfg/hyp 文件
-- **close_mosaic**：默认 10，最后 10 个 epoch 关闭 Mosaic 增强（训练中会暂停几秒重建 dataloader，属正常现象）
+
+**模型选择**：
+- 下拉框选择内置 `.pt` 模型
+- `n/s/m/l/x` 缩放选择器（仅对 `.yaml` 架构文件生效）
+- Browse 按钮可选择 `.pt` 或 `.yaml` 文件
+
+**训练参数（2×3 网格）**：
+- Epochs、Batch Size、Image Size
+- Learning Rate (lr0)、GPU Device、Optimizer
+
+**超参数（2×2 网格）**：
+- LR Factor (lrf)、Momentum
+- Weight Decay、Warmup Epochs
+
+**其他选项**：Cache Images、Resume Training
 
 ### 配置文件
 
@@ -120,6 +133,13 @@ VIDEO_SYNC_FPS = False
 - **格式**：ONNX / TorchScript / TensorRT / TFLite / CoreML / Paddle
 - **参数**：Image Size、ONNX Opset、FP16、Dynamic Batch、Simplify
 - **导出详情**：input shape、output shape、文件大小、ONNX opset 版本
+- Browse 按钮支持选择 `.pt` 或 `.yaml` 文件
+
+### Benchmark 页面
+
+- 测试 PyTorch 推理速度
+- 输出包含模型名称、mean/std/min/max/median/p95/p99 延迟和 FPS
+- Browse 按钮支持选择 `.pt` 或 `.yaml` 文件
 
 ---
 
@@ -146,13 +166,13 @@ Force Stop → trainer.stop = True
 
 ## 📦 支持的 YOLO 版本
 
-| 版本 | 文件名格式 | 预训练模型 |
-|------|-----------|-----------|
-| YOLOv5 | yolov5n/s/m/l/x.pt | ✅ |
-| YOLOv8 | yolov8n/s/m/l/x.pt | ✅ |
-| YOLOv10 | yolov10n/s/m/l/x/b.pt | ✅ |
-| YOLOv11 | yolo11n/s/m/l/x.pt | ✅ |
-| YOLO26 | yolo26n/s/m/l/x/c/e.pt | ✅ |
+| 版本 | 文件名格式 | 预训练模型 | YAML 架构 |
+|------|-----------|-----------|-----------|
+| YOLOv5 | yolov5n/s/m/l/x.pt | ✅ | ✅ |
+| YOLOv8 | yolov8n/s/m/l/x.pt | ✅ | ✅ |
+| YOLOv10 | yolov10n/s/m/l/x/b.pt | ✅ | ✅ |
+| YOLOv11 | yolo11n/s/m/l/x.pt | ✅ | ✅ |
+| YOLO26 | yolo26n/s/m/l/x/c/e.pt | ✅ | ✅ |
 
 ---
 
