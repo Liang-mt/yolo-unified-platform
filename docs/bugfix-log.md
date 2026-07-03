@@ -550,3 +550,52 @@ VIDEO_SYNC_FPS = True
 ```
 
 `main_window.py` 通过 `from . import settings` 导入，`workers.py` 由 `main_window.py` 传入参数，不需要直接导入 settings。
+
+---
+
+## 附录：训练 UI 优化（近期修改）
+
+### 训练参数 UI 重构
+
+**文件**: `gui/main_window.py` + `gui/workers.py`
+
+**变更内容**：
+
+1. **新增超参数控件**（2×2 网格）：LR Factor (lrf)、Momentum、Weight Decay、Warmup Epochs
+2. **删除 cfg/hyp 按钮**：ultralytics v8 不支持 `hyp=` 参数，cfg 功能保留但按钮移除
+3. **模型缩放选择器**：Train 页面新增 n/s/m/l/x 下拉框，对 `.yaml` 架构文件自动拼接缩放后缀
+4. **Browse 支持 .yaml**：文件选择对话框现在支持 `.pt` 和 `.yaml` 文件
+5. **Worker 生命周期优化**：训练开始前断开旧 worker 信号 + deleteLater()
+6. **Benchmark 输出模型名**：JSON 输出第一行显示当前测试的模型文件名
+
+### 模型选择联动
+
+**文件**: `gui/main_window.py`
+
+Train/Export/Benchmark 的模型选择逻辑：
+- 下拉框选择内置 `.pt` 模型 → 直接使用
+- Browse 选择自定义文件 → 名称替换到下拉框显示
+- 下拉框选内置模型 → 自动清除自定义路径
+- 模型路径解析：`_resolve_model(box, custom_path, scale_box)` 优先级：自定义路径 > 下拉框 > None
+
+### 超参数传递
+
+**文件**: `gui/workers.py`
+
+```python
+# 训练参数直接作为关键字参数传给 model.train()
+train_kwargs = dict(
+    data=self.data_path, epochs=self.epochs,
+    batch=self.batch, imgsz=self.imgsz,
+    lr0=self.lr, lrf=self.lrf,
+    momentum=self.momentum,
+    weight_decay=self.weight_decay,
+    warmup_epochs=self.warmup_epochs,
+    device=self.device,
+    optimizer=self.optimizer,
+    resume=self.resume, cache=self.cache,
+)
+result = model.train(**train_kwargs)
+```
+
+注意：ultralytics v8 的 `model.train()` 不支持 `hyp=` 参数。如果传入 `hyp=` 会报 `SystemExit`（未知配置键）。超参数必须展开为关键字参数传递。
